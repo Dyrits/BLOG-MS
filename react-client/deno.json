@@ -1,0 +1,13 @@
+{
+  "tasks": {
+    "watch": "deno task dev & deno fmt --watch"
+  },
+  "fmt": {
+    "lineWidth": 120,
+    "indentWidth": 2,
+    "semiColons": true,
+    "singleQuote": false,
+    "proseWrap": "preserve",
+    "include": ["src/"]
+  }
+}

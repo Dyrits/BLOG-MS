@@ -1,0 +1,68 @@
+services:
+  react-client:
+    build:
+      context: ./react-client
+      dockerfile: Dockerfile.development
+    environment:
+      - PORT=5173
+    ports:
+      - "5173:5173"
+    develop:
+      watch:
+        - action: sync
+          path: ./react-client/src
+          target: /app/src
+        - action: sync
+          path: ./react-client/index.html
+          target: /app/index.html
+        - action: sync+restart
+          path: ./react-client
+          target: /app
+          ignore:
+            - ./node_modules
+            - ./src
+            - ./index.html
+            - ./package.json
+        - action: rebuild
+          path: ./react-client/package.json
+    command: "deno task watch"
+
+  posts-api:
+    build:
+      context: ./posts-api
+      dockerfile: Dockerfile.development
+    environment:
+      - PORT=4005
+    ports:
+      - "4005:4005"
+    volumes:
+      - ./posts-api/data:/app/data
+    develop:
+      watch:
+        - action: sync
+          path: ./posts-api/src
+          target: /app/src
+        - action: sync+restart
+          path: ./posts-api/deno.json
+          target: /app/deno.json
+    command: "deno task watch"
+
+  comments-api:
+    build:
+      context: ./comments-api
+      dockerfile: Dockerfile.development
+    environment:
+      - PORT=4010
+    ports:
+      - "4010:4010"
+    volumes:
+      - ./comments-api/data:/app/data
+    develop:
+      watch:
+        - action: sync
+          path: ./comments-api/src
+          target: /app/src
+        - action: sync+restart
+          path: ./posts-api/deno.json
+          target: /app/deno.json
+    command: "deno task watch"
