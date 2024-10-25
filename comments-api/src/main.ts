@@ -1,7 +1,6 @@
-import express, { Request, Response } from "npm:express";
+import { Hono, Context } from "npm:hono";
 
-const app = express();
-app.use(express.json());
+const app = new Hono();
 
 interface Comment {
   id: string;
@@ -14,38 +13,33 @@ interface Posts {
 }
 
 const posts: Posts = JSON.parse(
-  new TextDecoder().decode(Deno.readFileSync("./data/posts.json")),
+  Deno.readTextFileSync("./data/posts.json"),
 );
 
-app.get("/", (_: Request, response: Response) => {
-  response.json({ message: "The Comments API is up and running." });
+app.get("/", (context: Context) => {
+  console.log("The Comments API is up and running.");
+  return context.json({ message: "The Comments API is up and running." });
 });
 
-app.get("/posts/:id/comments", (request: Request, response: Response) => {
-  const { id } = request.params;
-  response.json(posts[id].comments);
+app.get("/posts/:id/comments", (context: Context) => {
+  const id = context.req.param("id")
+  return context.json(posts[id].comments);
 });
 
-app.post("/posts/:id/comments", (request: Request, response: Response) => {
-  const { id } = request.params;
-  const { content } = request.body;
+app.post("/posts/:id/comments", async (context: Context) => {
+  const id = context.req.param("id");
+  const { content } = await context.req.json();
   const uuid =  crypto.randomUUID()
   const post = posts[id] || { id, comments: [] };
   const comments = post.comments;
   comments.push({ id: uuid, post$id: id, content });
   post.comments = comments;
   posts[id] = post;
-  Deno.writeFile(
+  Deno.writeTextFileSync(
     "data/posts.json",
-    new TextEncoder().encode(JSON.stringify(posts)),
+    JSON.stringify(posts)
   );
-  response.json({ id: uuid, post$id: id, content });
+  return context.json({ id: uuid, post$id: id, content });
 });
 
-app.listen(Deno.env.get("PORT"), () => {
-  console.log(
-    `The Comments API is up and running on: http://localhost:${
-      Deno.env.get("PORT")
-    }`,
-  );
-});
+Deno.serve({ port: 4010 }, app.fetch);
