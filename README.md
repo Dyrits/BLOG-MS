@@ -23,6 +23,11 @@ Ensure you have the following installed on your system:
     - Start the services defined in the `compose.development.yml` file.
     - Watch for changes in the specified directories and rebuild/restart the services as needed.
 
+   *Note: You can also use the `Makefile` to run the above command:*
+   ```sh
+    make watch
+   ```
+
 ## Services
 
 The `compose.development.yml` file defines the following services:
