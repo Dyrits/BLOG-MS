@@ -1,9 +1,10 @@
-import PostCreate from "./PostCreate.tsx";
+import PostsPage from "./pages/PostsPage.tsx";
 
 function App() {
+
   return (
     <div className="container">
-      <PostCreate />
+      <PostsPage />
     </div>
   );
 }

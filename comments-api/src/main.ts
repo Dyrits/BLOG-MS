@@ -1,6 +1,9 @@
 import { Hono, Context } from "npm:hono";
+import { cors } from "npm:hono/cors";
 
 const app = new Hono();
+
+app.use(cors());
 
 interface Comment {
   id: string;

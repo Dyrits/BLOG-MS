@@ -1,0 +1,13 @@
+{
+  "folders": [
+    {
+      "path": "posts-api"
+    },
+    {
+      "path": "comments-api"
+    }
+  ],
+  "settings": {
+    "deno.enable": true,
+  }
+}

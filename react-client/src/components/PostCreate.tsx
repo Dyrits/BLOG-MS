@@ -1,19 +1,22 @@
 import { FormEvent, useRef } from "react";
-import axios from "axios";
 
-function PostCreate() {
+import attempt from "../utilities/attempt.ts";
+import { NewPost } from "../types.ts";
+
+type Properties = {
+  create: (post: NewPost) => Promise<void>;
+}
+
+function PostCreate({ create }: Properties) {
   const title = useRef<HTMLInputElement>(null);
   const content = useRef<HTMLTextAreaElement>(null);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    try {
-      await axios.post("http://localhost:4005/posts", {
-        title: title.current!.value, content: content.current!.value
-      });
-    } catch (error) {
-      console.error(error);
-    } finally {
+    const [error] = await attempt(() =>
+      create({ title: title.current!.value, content: content.current!.value })
+    );
+    if (!error) {
       title.current!.value = String();
       content.current!.value = String();
     }

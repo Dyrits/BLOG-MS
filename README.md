@@ -28,7 +28,7 @@ Ensure you have the following installed on your system:
 The `compose.development.yml` file defines the following services:
 
 - **react-client:** Runs the React frontend application.
-- **posts-api:** Runs the Posts API service.
+- **posts-api:** Runs the PostsPage API service.
 - **comments-api:** Runs the Comments API service.
 
 ## Ports
