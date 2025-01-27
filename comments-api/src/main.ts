@@ -1,5 +1,6 @@
 import { Hono, Context } from "npm:hono";
 import { cors } from "npm:hono/cors";
+import axios from "npm:axios";
 
 const app = new Hono();
 
@@ -26,7 +27,7 @@ app.get("/", (context: Context) => {
 
 app.get("/posts/:id/comments", (context: Context) => {
   const id = context.req.param("id")
-  return context.json(posts[id].comments);
+  return context.json(posts[id] ? posts[id].comments : []);
 });
 
 app.post("/posts/:id/comments", async (context: Context) => {
@@ -42,7 +43,17 @@ app.post("/posts/:id/comments", async (context: Context) => {
     "data/posts.json",
     JSON.stringify(posts)
   );
+  axios.post("http://event-bus:4050/events", {
+    type: "CommentCreated",
+    data: { id: uuid, post$id: id, content },
+  }).catch(console.error);
   return context.json({ id: uuid, post$id: id, content });
+});
+
+app.post("/events", async (context: Context) => {
+  const { type } = await context.req.json();
+  console.log("Received Event:", type);
+  return context.json({ status: "OK" });
 });
 
 Deno.serve({ port: 4010 }, app.fetch);

@@ -1,4 +1,5 @@
 import express, { Request, Response } from "npm:express";
+import axios from "npm:axios";
 import cors from "npm:cors";
 
 const app = express();
@@ -31,7 +32,16 @@ app.post("/posts", (request: Request, response: Response) => {
   const uuid = crypto.randomUUID()
   posts[uuid] = { id: uuid, title, content };
   Deno.writeTextFileSync("data/posts.json", JSON.stringify(posts));
+  axios.post("http://event-bus:4050/events", {
+    type: "PostCreated",
+    data: posts[uuid],
+  }).catch(console.error);
   response.json(posts[uuid]);
+});
+
+app.post("/events", (request: Request, response: Response) => {
+  console.log("Received Event:", request.body.type);
+  response.json({ status: "OK" });
 });
 
 app.listen(Deno.env.get("PORT"), () => {

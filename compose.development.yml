@@ -42,9 +42,8 @@ services:
         - action: sync
           path: ./posts-api/src
           target: /app/src
-        - action: sync+restart
+        - action: rebuild
           path: ./posts-api/deno.json
-          target: /app/deno.json
     command: "deno task watch"
 
   comments-api:
@@ -62,7 +61,24 @@ services:
         - action: sync
           path: ./comments-api/src
           target: /app/src
-        - action: sync+restart
+        - action: rebuild
           path: ./posts-api/deno.json
-          target: /app/deno.json
     command: "deno task watch"
+
+  event-bus:
+    build:
+        context: ./event-bus
+        dockerfile: Dockerfile.development
+    environment:
+        - PORT=4050
+    ports:
+        - "4050:4050"
+    develop:
+        watch:
+            - action: sync
+              path: ./event-bus/
+              target: /app/
+              ignore:
+                - ./node_modules
+            - action: rebuild
+              path: ./event-bus/package.json
