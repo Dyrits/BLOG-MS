@@ -82,3 +82,21 @@ services:
                 - ./node_modules
             - action: rebuild
               path: ./event-bus/package.json
+
+  data-query:
+    build:
+      context: ./data-query
+      dockerfile: Dockerfile.development
+    environment:
+      - PORT=4100
+    ports:
+      - "4100:4100"
+    develop:
+      watch:
+        - action: sync
+          path: ./data-query/
+          target: /app/
+          ignore:
+            - ./node_modules
+        - action: rebuild
+          path: ./event-bus/package.json

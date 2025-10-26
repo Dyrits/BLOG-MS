@@ -7,7 +7,7 @@ Bun.serve({
 });
 
 console.log(
-  `The Posts API is up and running on: http://localhost:${
+  `The event bus is up and running on: http://localhost:${
     process.env.PORT
   }`,
 );

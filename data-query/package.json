@@ -1,0 +1,21 @@
+{
+	"name": "event-bus",
+	"module": "index.ts",
+	"type": "module",
+	"scripts": {
+		"watch": "bun --watch index.ts"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.3.0",
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"dependencies": {
+		"axios": "^1.7.9",
+		"express": "^5.1.0",
+		"helmet": "^8.1.0",
+		"hono": "^4.6.17"
+	}
+}
