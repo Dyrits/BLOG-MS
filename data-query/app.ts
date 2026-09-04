@@ -17,7 +17,7 @@ const ErrorSchema = Schema.Struct({
 
 const NotImplemented = ErrorSchema.pipe(HttpApiSchema.status(501));
 
-class DataQueryGroup extends HttpApiGroup.make("dataQuery", {
+class DataQueryGroup extends HttpApiGroup.make("data-query", {
 	topLevel: true,
 }).add(
 	HttpApiEndpoint.get("posts", "/posts", {
@@ -32,7 +32,7 @@ class DataQueryGroup extends HttpApiGroup.make("dataQuery", {
 
 class DataQueryApi extends HttpApi.make("data-query").add(DataQueryGroup) {}
 
-const notImplemented = (resource: string) =>
+const NotImplementedError = (resource: string) =>
 	Effect.fail({
 		error: {
 			code: "NOT_IMPLEMENTED",
@@ -42,11 +42,11 @@ const notImplemented = (resource: string) =>
 
 const DataQueryHandlers = HttpApiBuilder.group(
 	DataQueryApi,
-	"dataQuery",
+	"data-query",
 	Effect.fn("DataQueryHandlers")(function* (handlers) {
 		return handlers.handleAll({
-			posts: () => notImplemented("Posts"),
-			events: () => notImplemented("Events"),
+			posts: () => NotImplementedError("Posts"),
+			events: () => NotImplementedError("Events"),
 		});
 	}),
 );
@@ -55,24 +55,22 @@ const ApiRoutes = HttpApiBuilder.layer(DataQueryApi).pipe(
 	Layer.provide(DataQueryHandlers),
 );
 
-const securityHeaders: Readonly<Record<string, string>> = {
-	"content-security-policy": "default-src 'none'",
-	"cross-origin-opener-policy": "same-origin",
-	"cross-origin-resource-policy": "same-origin",
-	"referrer-policy": "no-referrer",
-	"x-content-type-options": "nosniff",
-	"x-frame-options": "SAMEORIGIN",
-};
-
-const webHandler = HttpRouter.toWebHandler(
+const web = HttpRouter.toWebHandler(
 	ApiRoutes.pipe(Layer.provide(HttpServer.layerServices)),
 );
 
 export const handler = async (request: Request): Promise<Response> => {
-	const response = await webHandler.handler(request);
+	const response = await web.handler(request);
 	const headers = new Headers(response.headers);
 
-	for (const [name, value] of Object.entries(securityHeaders)) {
+	for (const [name, value] of Object.entries({
+		"content-security-policy": "default-src 'none'",
+		"cross-origin-opener-policy": "same-origin",
+		"cross-origin-resource-policy": "same-origin",
+		"referrer-policy": "no-referrer",
+		"x-content-type-options": "nosniff",
+		"x-frame-options": "SAMEORIGIN",
+	})) {
 		headers.set(name, value);
 	}
 
@@ -93,4 +91,4 @@ export const handler = async (request: Request): Promise<Response> => {
 	});
 };
 
-export const dispose = webHandler.dispose;
+export const dispose = web.dispose;

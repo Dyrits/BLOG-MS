@@ -3,15 +3,15 @@ import { useRef } from "react";
 import attempt from "../utilities/attempt.ts";
 
 type Properties = {
-  create: (content: string) => Promise<void>;
+  store: (content: string) => Promise<void>;
 }
 
-function CommentCreate( { create }: Properties ) {
+function CommentStore( { store }: Properties ) {
   const content = useRef<HTMLInputElement>(null);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const [error] = await attempt(() => create(content.current!.value));
+    const [error] = await attempt(() => store(content.current!.value));
     if (!error) {
       content.current!.value = String();
     }
@@ -33,4 +33,4 @@ function CommentCreate( { create }: Properties ) {
 
 }
 
-export default CommentCreate;
+export default CommentStore;

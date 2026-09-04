@@ -3,23 +3,23 @@ import axios from "axios";
 
 import { Comment } from "../types.ts";
 import attempt from "../utilities/attempt.ts";
-import CommentCreate from "./CommentCreate.tsx";
+import CommentStore from "./CommentStore.tsx";
 
 type Properties = {
   post$id: string;
 }
 
-function PostList({ post$id }: Properties) {
+function CommentList({ post$id }: Properties) {
   const [comments, setComments] = useState<Comment[]>([]);
 
-  const getComments = useCallback(async () => {
+  const listComments = useCallback(async () => {
     const [error, response] = await attempt(() => axios.get(`http://localhost:4010/posts/${post$id}/comments`));
     if (!error) {
       return response.data;
     }
   }, [post$id]);
 
-  async function createComment(content: string) {
+  async function storeComment(content: string) {
     const [error, response] = await attempt(() => axios.post(`http://localhost:4010/posts/${post$id}/comments`, {
       content
     }));
@@ -29,10 +29,10 @@ function PostList({ post$id }: Properties) {
   }
 
   useEffect(() => {
-    getComments().then((comments: Comment[]) => {
+    listComments().then((comments: Comment[]) => {
       if (comments) setComments(comments);
     });
-  }, [getComments]);
+  }, [listComments]);
 
   return (
     <>
@@ -42,9 +42,9 @@ function PostList({ post$id }: Properties) {
           <li key={comment.id}>{comment.content}</li>
         ))}
       </ul>
-      <CommentCreate create={createComment} />
+      <CommentStore store={storeComment} />
     </>
   );
 }
 
-export default PostList;
+export default CommentList;

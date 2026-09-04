@@ -4,17 +4,17 @@ import attempt from "../utilities/attempt.ts";
 import { NewPost } from "../types.ts";
 
 type Properties = {
-  create: (post: NewPost) => Promise<void>;
+  store: (post: NewPost) => Promise<void>;
 }
 
-function PostCreate({ create }: Properties) {
+function PostStore({ store }: Properties) {
   const title = useRef<HTMLInputElement>(null);
   const content = useRef<HTMLTextAreaElement>(null);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const [error] = await attempt(() =>
-      create({ title: title.current!.value, content: content.current!.value })
+      store({ title: title.current!.value, content: content.current!.value })
     );
     if (!error) {
       title.current!.value = String();
@@ -42,4 +42,4 @@ function PostCreate({ create }: Properties) {
   );
 };
 
-export default PostCreate;
+export default PostStore;

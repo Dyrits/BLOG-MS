@@ -44,7 +44,7 @@ app.post("/posts/:id/comments", async (context) => {
     JSON.stringify(posts),
   );
   axios.post("http://event-bus:4050/events", {
-    type: "CommentCreated",
+    type: "CommentStored",
     data: { id: uuid, post$id: id, content },
   }).catch(console.error);
   return context.json({ id: uuid, post$id: id, content });
