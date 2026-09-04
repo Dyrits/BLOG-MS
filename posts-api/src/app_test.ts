@@ -7,13 +7,13 @@ const assertEquals = (actual: unknown, expected: unknown) => {
 };
 
 Deno.test("posts API routes and persistence", async () => {
-  const originalDirectory = Deno.cwd();
-  const temporaryDirectory = await Deno.makeTempDir();
+  const original = Deno.cwd();
+  const temporary = await Deno.makeTempDir();
 
   try {
-    await Deno.mkdir(`${temporaryDirectory}/data`);
-    await Deno.writeTextFile(`${temporaryDirectory}/data/posts.json`, "{}");
-    Deno.chdir(temporaryDirectory);
+    await Deno.mkdir(`${temporary}/data`);
+    await Deno.writeTextFile(`${temporary}/data/posts.json`, "{}");
+    Deno.chdir(temporary);
 
     const health = await handler(new Request("http://localhost/"));
     assertEquals(health.status, 200);
@@ -31,24 +31,24 @@ Deno.test("posts API routes and persistence", async () => {
       error: { code: "BAD_REQUEST", message: "Invalid request" },
     });
 
-    const created = await handler(
+    const store = await handler(
       new Request("http://localhost/posts", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ title: "Effect", content: "Typed effects" }),
       }),
     );
-    assertEquals(created.status, 200);
-    const post = await created.json();
-    assertEquals(post.title, "Effect");
-    assertEquals(post.content, "Typed effects");
+    assertEquals(store.status, 200);
+    const stored = await store.json();
+    assertEquals(stored.title, "Effect");
+    assertEquals(stored.content, "Typed effects");
 
-    const listed = await handler(new Request("http://localhost/posts"));
-    assertEquals(listed.status, 200);
-    assertEquals((await listed.json())[post.id], post);
+    const index = await handler(new Request("http://localhost/posts"));
+    assertEquals(index.status, 200);
+    assertEquals((await index.json())[stored.id], stored);
 
-    const persisted = JSON.parse(await Deno.readTextFile("data/posts.json"));
-    assertEquals(persisted[post.id], post);
+    const indexed = JSON.parse(await Deno.readTextFile("data/posts.json"));
+    assertEquals(indexed[stored.id], stored);
 
     const event = await handler(
       new Request("http://localhost/events", {
@@ -60,7 +60,7 @@ Deno.test("posts API routes and persistence", async () => {
     assertEquals(event.status, 200);
     assertEquals(await event.json(), { status: "OK" });
 
-    const missing = await handler(new Request("http://localhost/missing"));
+    const missing = await handler(new Request(`http://localhost/${crypto.randomUUID()}`));
     assertEquals(missing.status, 404);
     assertEquals(await missing.json(), {
       error: { code: "NOT_FOUND", message: "Route not found" },
@@ -75,7 +75,7 @@ Deno.test("posts API routes and persistence", async () => {
     assertEquals(preflight.headers.get("access-control-allow-origin"), "*");
   } finally {
     await dispose();
-    Deno.chdir(originalDirectory);
-    await Deno.remove(temporaryDirectory, { recursive: true });
+    Deno.chdir(original);
+    await Deno.remove(temporary, { recursive: true });
   }
 });

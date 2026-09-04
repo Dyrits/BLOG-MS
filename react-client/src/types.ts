@@ -4,7 +4,7 @@ export interface Post {
   content: string;
 }
 
-export interface NewPost extends Omit<Post, "id"> {}
+export type NewPost = Omit<Post, "id">;
 
 export interface Posts {
   [id: string]: Post;
@@ -16,4 +16,4 @@ export interface Comment {
   content: string;
 }
 
-export interface NewComment extends Omit<Comment, "id"> {}
+export type NewComment = Omit<Comment, "id">;

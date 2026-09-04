@@ -2,8 +2,8 @@ FROM denoland/deno:latest
 
 WORKDIR /app
 
-COPY ./package.json ./
+COPY ./package.json ./deno.json ./deno.lock ./
 
-RUN deno install
+RUN deno install --frozen
 
 COPY ./ ./

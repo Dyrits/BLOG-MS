@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 
 import { Comment } from "../types.ts";
@@ -12,27 +12,27 @@ type Properties = {
 function PostList({ post$id }: Properties) {
   const [comments, setComments] = useState<Comment[]>([]);
 
-  async function getComments() {
+  const getComments = useCallback(async () => {
     const [error, response] = await attempt(() => axios.get(`http://localhost:4010/posts/${post$id}/comments`));
     if (!error) {
       return response.data;
     }
-  }
+  }, [post$id]);
 
   async function createComment(content: string) {
     const [error, response] = await attempt(() => axios.post(`http://localhost:4010/posts/${post$id}/comments`, {
       content
     }));
     if (!error) {
-      setComments([...comments, response.data]);
+      setComments((current) => [...current, response.data]);
     }
   }
 
   useEffect(() => {
     getComments().then((comments: Comment[]) => {
-      comments && setComments(comments);
-    })
-  }, []);
+      if (comments) setComments(comments);
+    });
+  }, [getComments]);
 
   return (
     <>

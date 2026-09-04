@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Context, Hono } from "hono";
+import { Hono } from "hono";
 import { cors } from "hono/cors";
 
 const app = new Hono();
@@ -20,17 +20,17 @@ const posts: Posts = JSON.parse(
   Deno.readTextFileSync("./data/posts.json"),
 );
 
-app.get("/", (context: Context) => {
+app.get("/", (context) => {
   console.log("The Comments API is up and running.");
   return context.json({ message: "The Comments API is up and running." });
 });
 
-app.get("/posts/:id/comments", (context: Context) => {
+app.get("/posts/:id/comments", (context) => {
   const id = context.req.param("id");
   return context.json(posts[id] ? posts[id].comments : []);
 });
 
-app.post("/posts/:id/comments", async (context: Context) => {
+app.post("/posts/:id/comments", async (context) => {
   const id = context.req.param("id");
   const { content } = await context.req.json();
   const uuid = crypto.randomUUID();
@@ -50,7 +50,7 @@ app.post("/posts/:id/comments", async (context: Context) => {
   return context.json({ id: uuid, post$id: id, content });
 });
 
-app.post("/events", async (context: Context) => {
+app.post("/events", async (context) => {
   const { type } = await context.req.json();
   console.log("Received Event:", type);
   return context.json({ status: "OK" });

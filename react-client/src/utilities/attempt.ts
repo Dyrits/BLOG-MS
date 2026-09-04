@@ -1,8 +1,8 @@
-export default async function attempt(callback: () => Promise<any>) {
+export default async function attempt<T>(callback: () => Promise<T>): Promise<[null, T] | [Error, null]> {
   try {
     return [null, await callback()];
   } catch (error) {
     console.error(error);
-    return [error, null];
+    return [error instanceof Error ? error : new Error(String(error)), null];
   }
 }

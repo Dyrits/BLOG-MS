@@ -1,4 +1,5 @@
 {
+  "nodeModulesDir": "auto",
   "imports": {
     "effect": "npm:effect@4.0.0-rc.112",
     "effect/unstable/http": "npm:effect@4.0.0-rc.112/unstable/http",
@@ -6,7 +7,7 @@
   },
   "tasks": {
     "watch": "deno fmt && deno lint ./src && deno check ./src/main.ts ./src/app_test.ts && (deno run --allow-env --allow-net --allow-read=data --allow-write=data --watch ./src/main.ts & deno check --watch ./src/main.ts ./src/app_test.ts & deno lint --watch ./src & deno fmt --watch)",
-    "test": "deno test --allow-net --allow-read --allow-write"
+    "test": "deno test --allow-read --allow-write"
   },
   "fmt": {
     "lineWidth": 120,
