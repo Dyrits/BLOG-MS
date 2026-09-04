@@ -7,7 +7,7 @@ const EventAcknowledgement = Schema.Struct({ status: Schema.String });
 
 class PostsGroup extends HttpApiGroup.make("posts", { topLevel: true }).add(
   HttpApiEndpoint.get("health", "/", { success: Message }),
-  HttpApiEndpoint.get("index", "/posts", {
+  HttpApiEndpoint.get("list", "/posts", {
     success: Posts,
   }),
   HttpApiEndpoint.post("store", "/posts", {

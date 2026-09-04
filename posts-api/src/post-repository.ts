@@ -6,7 +6,7 @@ export class PostRepositoryError extends Schema.TaggedError<PostRepositoryError>
 }) {}
 
 export class PostRepository extends Context.Service<PostRepository, {
-  readonly index: Effect.Effect<Posts>;
+  readonly list: Effect.Effect<Posts>;
   readonly store: (post: Post) => Effect.Effect<Post, PostRepositoryError>;
 }>()("blog-ms/posts-api/PostRepository") {
   static readonly layer = Layer.effect(
@@ -28,7 +28,7 @@ export class PostRepository extends Context.Service<PostRepository, {
         Effect.mapError((cause) => new PostRepositoryError({ cause })),
       );
       const state = yield* Ref.make(initial);
-      const index = Ref.get(state);
+      const list = Ref.get(state);
       const semaphore = yield* Semaphore.make(1);
       const store = Effect.fn("PostRepository.store")(function* (post: Post) {
         return yield* semaphore.withPermits(1)(
@@ -56,7 +56,7 @@ export class PostRepository extends Context.Service<PostRepository, {
         );
       });
 
-      return PostRepository.of({ index, store });
+      return PostRepository.of({ list, store });
     }),
   );
 }

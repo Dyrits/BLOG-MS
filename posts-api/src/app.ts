@@ -15,7 +15,7 @@ const PostsHandlers = HttpApiBuilder.group(
 
     return handlers.handleAll({
       health: () => Effect.succeed({ message: "The Posts API is up and running." }),
-      index: () => repository.index,
+      list: () => repository.list,
       store: Effect.fn("PostsHandlers.store")(function* ({ payload }) {
         const post = new Post({ id: crypto.randomUUID(), ...payload });
         const stored = yield* repository.store(post).pipe(

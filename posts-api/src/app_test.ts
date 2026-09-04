@@ -43,12 +43,12 @@ Deno.test("posts API routes and persistence", async () => {
     assertEquals(stored.title, "Effect");
     assertEquals(stored.content, "Typed effects");
 
-    const index = await handler(new Request("http://localhost/posts"));
-    assertEquals(index.status, 200);
-    assertEquals((await index.json())[stored.id], stored);
+    const list = await handler(new Request("http://localhost/posts"));
+    assertEquals(list.status, 200);
+    assertEquals((await list.json())[stored.id], stored);
 
-    const indexed = JSON.parse(await Deno.readTextFile("data/posts.json"));
-    assertEquals(indexed[stored.id], stored);
+    const listed = JSON.parse(await Deno.readTextFile("data/posts.json"));
+    assertEquals(listed[stored.id], stored);
 
     const event = await handler(
       new Request("http://localhost/events", {
