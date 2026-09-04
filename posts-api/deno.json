@@ -1,6 +1,12 @@
 {
+  "imports": {
+    "effect": "npm:effect@4.0.0-rc.112",
+    "effect/unstable/http": "npm:effect@4.0.0-rc.112/unstable/http",
+    "effect/unstable/httpapi": "npm:effect@4.0.0-rc.112/unstable/httpapi"
+  },
   "tasks": {
-    "watch": "deno run --allow-all --watch ./src/main.ts & deno fmt --watch"
+    "watch": "deno fmt && deno lint ./src && deno check ./src/main.ts ./src/app_test.ts && (deno run --allow-env --allow-net --allow-read=data --allow-write=data --watch ./src/main.ts & deno check --watch ./src/main.ts ./src/app_test.ts & deno lint --watch ./src & deno fmt --watch)",
+    "test": "deno test --allow-net --allow-read --allow-write"
   },
   "fmt": {
     "lineWidth": 120,

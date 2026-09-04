@@ -1,21 +1,22 @@
 {
-	"name": "event-bus",
+	"name": "data-query",
 	"module": "index.ts",
 	"type": "module",
 	"scripts": {
-		"watch": "bun --watch index.ts"
+		"watch": "biome check --write . && bun run check:effect && (bun --watch index.ts & tsc --noEmit --watch --preserveWatchOutput)",
+		"test": "bun test",
+		"typecheck": "tsc --noEmit",
+		"check:effect": "effect-language-service diagnostics --project tsconfig.json --format pretty",
+		"check": "biome check . && tsc --noEmit && bun run check:effect && bun test",
+		"fix": "biome check --write ."
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.0",
-		"@types/bun": "latest"
-	},
-	"peerDependencies": {
+		"@effect/language-service": "^0.87.2",
+		"@types/bun": "latest",
 		"typescript": "^5.0.0"
 	},
 	"dependencies": {
-		"axios": "^1.7.9",
-		"express": "^5.1.0",
-		"helmet": "^8.1.0",
-		"hono": "^4.6.17"
+		"effect": "^4.0.0-rc.112"
 	}
 }

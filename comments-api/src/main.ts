@@ -1,6 +1,6 @@
-import { Hono, Context } from "npm:hono";
-import { cors } from "npm:hono/cors";
-import axios from "npm:axios";
+import axios from "axios";
+import { Context, Hono } from "hono";
+import { cors } from "hono/cors";
 
 const app = new Hono();
 
@@ -26,14 +26,14 @@ app.get("/", (context: Context) => {
 });
 
 app.get("/posts/:id/comments", (context: Context) => {
-  const id = context.req.param("id")
+  const id = context.req.param("id");
   return context.json(posts[id] ? posts[id].comments : []);
 });
 
 app.post("/posts/:id/comments", async (context: Context) => {
   const id = context.req.param("id");
   const { content } = await context.req.json();
-  const uuid =  crypto.randomUUID()
+  const uuid = crypto.randomUUID();
   const post = posts[id] || { id, comments: [] };
   const comments = post.comments;
   comments.push({ id: uuid, post$id: id, content });
@@ -41,7 +41,7 @@ app.post("/posts/:id/comments", async (context: Context) => {
   posts[id] = post;
   Deno.writeTextFileSync(
     "data/posts.json",
-    JSON.stringify(posts)
+    JSON.stringify(posts),
   );
   axios.post("http://event-bus:4050/events", {
     type: "CommentCreated",
