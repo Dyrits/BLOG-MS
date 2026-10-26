@@ -1,0 +1,3 @@
+[install]
+# Matches the Deno default: a release younger than 24 hours is not installed, so a compromised version can be pulled first.
+minimumReleaseAge = 86400

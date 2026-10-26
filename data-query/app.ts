@@ -1,12 +1,12 @@
 import { Effect, Layer, Schema } from "effect";
-import { HttpRouter, HttpServer } from "effect/unstable/http";
+import { HttpRouter, HttpServer } from "effect/http";
 import {
 	HttpApi,
 	HttpApiBuilder,
 	HttpApiEndpoint,
 	HttpApiGroup,
 	HttpApiSchema,
-} from "effect/unstable/httpapi";
+} from "effect/http-api";
 
 const ErrorSchema = Schema.Struct({
 	error: Schema.Struct({

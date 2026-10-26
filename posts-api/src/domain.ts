@@ -1,5 +1,5 @@
 import { Schema } from "effect";
-import { HttpApiSchema } from "effect/unstable/httpapi";
+import { HttpApiSchema } from "effect/http-api";
 
 export class Post extends Schema.Class<Post>("Post")({
   id: Schema.String,

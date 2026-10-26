@@ -1,9 +1,9 @@
 {
   "nodeModulesDir": "auto",
   "imports": {
-    "effect": "npm:effect@4.0.0-rc.112",
-    "effect/unstable/http": "npm:effect@4.0.0-rc.112/unstable/http",
-    "effect/unstable/httpapi": "npm:effect@4.0.0-rc.112/unstable/httpapi"
+    "effect": "npm:effect@4.0.6",
+    "effect/http": "npm:effect@4.0.6/http",
+    "effect/http-api": "npm:effect@4.0.6/http-api"
   },
   "tasks": {
     "watch": "deno fmt && deno lint ./src && deno check ./src/main.ts ./src/app_test.ts && (deno run --allow-env --allow-net --allow-read=data --allow-write=data --watch ./src/main.ts & deno check --watch ./src/main.ts ./src/app_test.ts & deno lint --watch ./src & deno fmt --watch)",

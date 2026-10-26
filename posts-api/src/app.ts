@@ -1,6 +1,6 @@
 import { Context, Effect, Layer } from "effect";
-import { HttpRouter, HttpServer } from "effect/unstable/http";
-import { HttpApiBuilder } from "effect/unstable/httpapi";
+import { HttpRouter, HttpServer } from "effect/http";
+import { HttpApiBuilder } from "effect/http-api";
 import { PostsApi } from "./api.ts";
 import { errorify, Post } from "./domain.ts";
 import { EventPublisher } from "./event-publisher.ts";

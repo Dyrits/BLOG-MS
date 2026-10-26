@@ -1,5 +1,5 @@
 import { Context, Effect, Layer, Schema } from "effect";
-import { FetchHttpClient, HttpClient, HttpClientRequest } from "effect/unstable/http";
+import { FetchHttpClient, HttpClient, HttpClientRequest } from "effect/http";
 import { PostEvent } from "./domain.ts";
 
 export class EventPublisherError extends Schema.TaggedError<EventPublisherError>()("EventPublisherError", {
