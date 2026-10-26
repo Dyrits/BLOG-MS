@@ -1,53 +1,102 @@
-import { Effect, Layer, Schema } from "effect";
+import { Effect, Layer, Ref, Schema } from "effect";
 import { HttpRouter, HttpServer } from "effect/http";
 import {
 	HttpApi,
 	HttpApiBuilder,
 	HttpApiEndpoint,
 	HttpApiGroup,
-	HttpApiSchema,
 } from "effect/http-api";
 
-const ErrorSchema = Schema.Struct({
-	error: Schema.Struct({
-		code: Schema.String,
-		message: Schema.String,
+const Comment = Schema.Struct({
+	id: Schema.String,
+	content: Schema.String,
+});
+
+const Post = Schema.Struct({
+	id: Schema.String,
+	title: Schema.String,
+	content: Schema.String,
+	comments: Schema.Array(Comment),
+});
+
+const Posts = Schema.Record(Schema.String, Post);
+type Posts = typeof Posts.Type;
+
+const PostStoredEvent = Schema.Struct({
+	type: Schema.Literal("PostStored"),
+	data: Schema.Struct({
+		id: Schema.String,
+		title: Schema.String,
+		content: Schema.String,
 	}),
 });
 
-const NotImplemented = ErrorSchema.pipe(HttpApiSchema.status(501));
+const CommentStoredEvent = Schema.Struct({
+	type: Schema.Literal("CommentStored"),
+	data: Schema.Struct({
+		id: Schema.String,
+		post$id: Schema.String,
+		content: Schema.String,
+	}),
+});
+
+// The event bus forwards every event to every service, so unknown types must be accepted and ignored.
+const OtherEvent = Schema.Struct({
+	type: Schema.String,
+});
+
+const Event = Schema.Union([PostStoredEvent, CommentStoredEvent, OtherEvent]);
+type Event = typeof Event.Type;
+
+const EventAcknowledgement = Schema.Struct({ status: Schema.String });
 
 class DataQueryGroup extends HttpApiGroup.make("data-query", {
 	topLevel: true,
 }).add(
-	HttpApiEndpoint.get("posts", "/posts", {
-		error: NotImplemented,
-		success: Schema.Unknown,
+	HttpApiEndpoint.get("PostsList", "/posts", {
+		success: Posts,
 	}),
-	HttpApiEndpoint.get("events", "/events", {
-		error: NotImplemented,
-		success: Schema.Unknown,
+	HttpApiEndpoint.post("EventsReceive", "/events", {
+		payload: Event,
+		success: EventAcknowledgement,
 	}),
 ) {}
 
 class DataQueryApi extends HttpApi.make("data-query").add(DataQueryGroup) {}
 
-const NotImplementedError = (resource: string) =>
-	Effect.fail({
-		error: {
-			code: "NOT_IMPLEMENTED",
-			message: `${resource} query is not implemented`,
-		},
-	});
+const project = (posts: Posts, event: Event): Posts => {
+	if (Schema.is(PostStoredEvent)(event)) {
+		const { id, title, content } = event.data;
+		return { ...posts, [id]: { id, title, content, comments: [] } };
+	}
+
+	if (Schema.is(CommentStoredEvent)(event)) {
+		const { id, post$id, content } = event.data;
+		const post = posts[post$id];
+		// A comment whose post was never received cannot be shown, so it is dropped.
+		if (!post) return posts;
+		return {
+			...posts,
+			[post$id]: { ...post, comments: [...post.comments, { id, content }] },
+		};
+	}
+
+	return posts;
+};
 
 const DataQueryHandlers = HttpApiBuilder.group(
 	DataQueryApi,
 	"data-query",
 	Effect.fn("DataQueryHandlers")(function* (handlers) {
-		return handlers.handleAll({
-			posts: () => NotImplementedError("Posts"),
-			events: () => NotImplementedError("Events"),
-		});
+		const posts = yield* Ref.make<Posts>({});
+
+		return handlers
+			.handle("PostsList", () => Ref.get(posts))
+			.handle("EventsReceive", ({ payload }) =>
+				Ref.update(posts, (current) => project(current, payload)).pipe(
+					Effect.as({ status: "OK" }),
+				),
+			);
 	}),
 );
 
