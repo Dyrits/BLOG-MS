@@ -14,9 +14,9 @@ const PostsHandlers = HttpApiBuilder.group(
     const publisher = yield* EventPublisher;
 
     return handlers.handleAll({
-      health: () => Effect.succeed({ message: "The Posts API is up and running." }),
-      list: () => repository.list,
-      store: Effect.fn("PostsHandlers.store")(function* ({ payload }) {
+      HealthCheck: () => Effect.succeed({ message: "The Posts API is up and running." }),
+      PostsList: () => repository.list,
+      PostsStore: Effect.fn("PostsHandlers.PostsStore")(function* ({ payload }) {
         const post = new Post({ id: crypto.randomUUID(), ...payload });
         const stored = yield* repository.store(post).pipe(
           Effect.mapError(() => errorify("STORAGE_ERROR", "Unable to persist the post")),
@@ -27,7 +27,7 @@ const PostsHandlers = HttpApiBuilder.group(
         );
         return stored;
       }),
-      receive: ({ payload }) =>
+      EventsReceive: ({ payload }) =>
         Effect.log(`Received Event: ${payload.type}`).pipe(
           Effect.as({ status: "OK" }),
         ),

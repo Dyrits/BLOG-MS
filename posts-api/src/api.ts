@@ -6,16 +6,16 @@ const Message = Schema.Struct({ message: Schema.String });
 const EventAcknowledgement = Schema.Struct({ status: Schema.String });
 
 class PostsGroup extends HttpApiGroup.make("posts", { topLevel: true }).add(
-  HttpApiEndpoint.get("health", "/", { success: Message }),
-  HttpApiEndpoint.get("list", "/posts", {
+  HttpApiEndpoint.get("HealthCheck", "/", { success: Message }),
+  HttpApiEndpoint.get("PostsList", "/posts", {
     success: Posts,
   }),
-  HttpApiEndpoint.post("store", "/posts", {
+  HttpApiEndpoint.post("PostsStore", "/posts", {
     payload: NewPost,
     success: Post,
     error: InternalServerError,
   }),
-  HttpApiEndpoint.post("receive", "/events", {
+  HttpApiEndpoint.post("EventsReceive", "/events", {
     payload: Event,
     success: EventAcknowledgement,
   }),
