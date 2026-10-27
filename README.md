@@ -1,52 +1,48 @@
-# Project Setup and Launch Guide
+# Blog-MS
 
-This guide will help you set up and launch the project using Docker Compose with the `compose.development.yml` file.
+A full-stack TypeScript refresher exploring microservice architecture across multiple JavaScript runtimes and frameworks.
 
-## Prerequisites
+**Status:** work in progress - last repository activity: September 2026
 
-Ensure you have the following installed on your system:
-- Docker
+## About The Project
+
+Containerized APIs built with Deno, Bun, Effect TS and Hono, alongside a React frontend and an event-driven communication layer.
+
+### Built With
+
+- React (frontend)
+- Deno, Bun, Effect TS, Hono (API services)
 - Docker Compose
 
-## Steps to Launch the Project
+## Getting Started
 
-1. **Clone the Repository:**
+### Prerequisites
 
-2. **Build and Launch the Project:**
-   Use the following command to build and launch the project with Docker Compose:
+- Docker and Docker Compose
+
+### Installation
+
+1. Clone the repository.
+2. Build and launch:
    ```sh
    docker compose -f compose.development.yml up --watch --build
    ```
+   Or via the Makefile: `make watch`
 
-   This command will:
-    - Build the Docker images specified in the `compose.development.yml` file.
-    - Start the services defined in the `compose.development.yml` file.
-    - Watch for changes in the specified directories and rebuild/restart the services as needed.
+## Usage
 
-   *Note: You can also use the `Makefile` to run the above command:*
-   ```sh
-    make watch
-   ```
+| Service | URL |
+| --- | --- |
+| react-client | http://localhost:5173 |
+| posts-api | http://localhost:4005 |
+| comments-api | http://localhost:4010 |
 
-## Services
+The development compose file watches for changes and syncs, rebuilds or restarts services automatically.
 
-The `compose.development.yml` file defines the following services:
+## License
 
-- **react-client:** Runs the React frontend application.
-- **posts-api:** Runs the PostsPage API service.
-- **comments-api:** Runs the Comments API service.
+No license file is present in this repository.
 
-## Ports
+## Contact
 
-The services will be available on the following ports:
-- `react-client`: [http://localhost:5173](http://localhost:5173)
-- `posts-api`: [http://localhost:4005](http://localhost:4005)
-- `comments-api`: [http://localhost:4010](http://localhost:4010)
-
-## Development
-
-The `compose.development.yml` file is configured to watch for changes in the source code and automatically sync, rebuild, or restart the services as needed. This allows for a smooth development experience without needing to manually restart the services.
-
-## Conclusion
-
-You should now be able to set up and launch the project using Docker Compose. If you encounter any issues, please refer to the Docker and Docker Compose documentation or seek help from the project maintainers.
+Dyrits - https://github.com/Dyrits
