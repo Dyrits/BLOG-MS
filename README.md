@@ -2,7 +2,7 @@
 
 A full-stack TypeScript refresher exploring microservice architecture across multiple JavaScript runtimes and frameworks.
 
-**Status:** work in progress - last repository activity: September 2026
+**Status:** work in progress
 
 ## About The Project
 
