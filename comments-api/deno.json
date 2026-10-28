@@ -2,8 +2,8 @@
   "nodeModulesDir": "auto",
   "imports": {
     "axios": "npm:axios@1.20.0",
-    "hono": "npm:hono@4.13.7",
-    "hono/cors": "npm:hono@4.13.7/cors"
+    "hono": "npm:hono@4.13.14",
+    "hono/cors": "npm:hono@4.13.14/cors"
   },
   "tasks": {
     "watch": "deno fmt && deno lint ./src && deno check ./src/main.ts && (deno run --allow-all --watch ./src/main.ts & deno check --watch ./src/main.ts & deno lint --watch ./src & deno fmt --watch)"
